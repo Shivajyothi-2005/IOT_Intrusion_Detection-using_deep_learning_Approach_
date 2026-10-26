@@ -1,0 +1,52 @@
+{
+  "ids-server": {
+    "device_id": "ids-server",
+    "name": "IDS Local Server Node",
+    "ip_address": "192.168.0.137",
+    "device_type": "Server",
+    "status": "online",
+    "total_flows": 1770,
+    "anomalies_detected": 1283,
+    "last_seen": 1782783838.1848245
+  },
+  "laptop-SHIVA_JYOTHI": {
+    "device_id": "laptop-SHIVA_JYOTHI",
+    "name": "Autodetected Device (laptop-SHIVA_JYOTHI)",
+    "ip_address": "192.168.0.137",
+    "device_type": "Laptop",
+    "status": "offline",
+    "total_flows": 31,
+    "anomalies_detected": 31,
+    "last_seen": 1782783210.64287
+  },
+  "hp-laptop-15": {
+    "device_id": "hp-laptop-15",
+    "name": "Shiva Jyothi HP Laptop",
+    "ip_address": "192.168.0.137",
+    "device_type": "Laptop",
+    "status": "online",
+    "total_flows": 10279,
+    "anomalies_detected": 653,
+    "last_seen": 1782784563.7162137
+  },
+  "browser-4179": {
+    "device_id": "browser-4179",
+    "name": "My Workstation Web",
+    "ip_address": "127.0.0.1",
+    "device_type": "Laptop",
+    "status": "offline",
+    "total_flows": 1,
+    "anomalies_detected": 0,
+    "last_seen": 1782783210.6428776
+  },
+  "swec": {
+    "device_id": "swec",
+    "name": "SWECHHA Laptop",
+    "ip_address": "172.20.10.7",
+    "device_type": "Laptop",
+    "status": "offline",
+    "total_flows": 12,
+    "anomalies_detected": 1,
+    "last_seen": 1782783210.6428783
+  }
+}

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Threat Detection System | Deep Learning IDS</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Toast Alert Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <div class="logo-text">
+                    <h2>SECURE.IoT</h2>
+                    <span>DeepLearning IDS v1.0</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="analytics">
+                    <i class="fa-solid fa-chart-line"></i> Analytics Hub
+                </button>
+                <button class="nav-btn" data-tab="monitor">
+                    <i class="fa-solid fa-terminal"></i> Live Monitor
+                </button>
+                <button class="nav-btn" data-tab="topology">
+                    <i class="fa-solid fa-circle-nodes"></i> Network Topology Map
+                </button>
+                <button class="nav-btn" data-tab="devices">
+                    <i class="fa-solid fa-server"></i> Device Registry
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="system-status-indicator">
+                    <span class="status-dot online" id="ws-status-dot"></span>
+                    <span class="status-text" id="ws-status-text">Connecting WebSocket...</span>
+                </div>
+                <div class="server-ip-badge">
+                    <span class="label">IDS SERVER IP</span>
+                    <span class="val" id="display-server-ip">Detecting...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <main class="workspace">
+            <!-- Header -->
+            <header class="workspace-header">
+                <div class="header-title">
+                    <h1 id="page-title">Analytics Hub</h1>
+                    <p id="page-subtitle">Real-time deep learning cyber security threat detection for IoT devices</p>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="system-time">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="current-time">00:00:00 UTC</span>
+                    </div>
+                    <!-- Audio Mute Switch -->
+                    <button class="sound-toggle-btn" id="sound-toggle" title="Toggle Alarm Sound">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page 1: Analytics Dashboard -->
+            <section class="tab-content active" id="analytics-page">
+                <!-- Status Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon normal-bg">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Ingested Flows</h3>
+                            <p class="stat-value" id="stat-total-flows">0</p>
+                            <span class="stat-trend" id="stat-flow-trend">Waiting for traffic...</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon threat-bg">
+                            <i class="fa-solid fa-bug"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Threat Detections</h3>
+                            <p class="stat-value" id="stat-anomalies">0</p>
+                            <span class="stat-trend threat-color" id="stat-anomalies-pct">0% threat ratio</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon device-bg">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>Active Devices</h3>
+                            <p class="stat-value" id="stat-active-devices">0</p>
+                            <span class="stat-trend" id="stat-devices-detail">Registered nodes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="threat-index-card">
+                        <div class="stat-icon index-bg">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="stat-details">
+                            <h3>System Threat Index</h3>
+                            <p class="stat-value" id="stat-threat-index">0.0%</p>
+                            <span class="stat-trend" id="stat-threat-status">SECURE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-container">
+                    <div class="chart-box large">
+                        <div class="chart-header">
+                            <h4>Network Flow Timeline</h4>
+                            <span>Flows per unit time</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="flowTimelineChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="charts-sub-grid">
+                        <div class="chart-box">
+                            <div class="chart-header">
+                                <h4>Inference Threat Distribution</h4>
+                                <span>PyTorch 1D-CNN Classification</span>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="threatPieChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-box">
+                            <div class="chart-header">
+                                <h4>Device Ingestion Rates</h4>
+                                <span>Volume reported per node</span>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="deviceBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page 2: IDS Live Monitor -->
+            <section class="tab-content" id="monitor-page">
+                <!-- Monitor Top Dashboard -->
+                <div class="monitor-controls-panel">
+                    <div class="controls-left">
+                        <span class="control-label">Background Simulation Ingestion:</span>
+                        <label class="switch">
+                            <input type="checkbox" id="simulator-toggle-checkbox" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="simulator-status-label" id="simulator-status-badge">Enabled</span>
+                    </div>
+                    
+                    <div class="controls-right">
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-filter="all">All Flows</button>
+                            <button class="filter-btn" data-filter="normal">Benign Only</button>
+                            <button class="filter-btn" data-filter="threat">Intrusions Only</button>
+                        </div>
+                        <button class="action-btn clear-btn" id="clear-logs-btn">
+                            <i class="fa-solid fa-trash-can"></i> Clear Screen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Logger Console -->
+                <div class="logger-console-container">
+                    <div class="logger-header-row">
+                        <div class="col-time">Timestamp</div>
+                        <div class="col-device">Source Device</div>
+                        <div class="col-flow">Network Connection (5-Tuple)</div>
+                        <div class="col-packets">Packets</div>
+                        <div class="col-bytes">Bytes</div>
+                        <div class="col-rate">Pkt Rate</div>
+                        <div class="col-classification">Inference Classification</div>
+                        <div class="col-action">Details</div>
+                    </div>
+                    <div class="logger-rows" id="console-logs-list">
+                        <!-- Filled dynamically -->
+                        <div class="logger-placeholder">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                            <p>Awaiting live traffic telemetry...</p>
+                        </div>
+                </div>
+            </section>
+
+            <!-- Page: Network Topology Map -->
+            <section class="tab-content" id="topology-page">
+                <div class="topology-container-wrapper">
+                    <div class="topology-header-controls">
+                        <div class="topology-meta">
+                            <h3>Live Threat Mapping Canvas</h3>
+                            <p class="subtitle">Interactive visualization of telemetry ingestion lines and alert flash vectors</p>
+                        </div>
+                        <div class="topology-legend">
+                            <div class="legend-item"><span class="legend-dot central"></span> Central Server</div>
+                            <div class="legend-item"><span class="legend-dot benign"></span> Benign Flow</div>
+                            <div class="legend-item"><span class="legend-dot threat"></span> Intrusion Flow</div>
+                        </div>
+                    </div>
+                    <div class="topology-canvas-box">
+                        <svg id="network-topology-svg" width="100%" height="520" viewBox="0 0 800 520">
+                            <defs>
+                                <pattern id="topology-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.02)" stroke-width="1"/>
+                                </pattern>
+                                <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="6" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                                <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="6" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                                <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="8" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#topology-grid)" />
+                            <g id="topology-connections"></g>
+                            <g id="topology-pulses"></g>
+                            <g id="topology-nodes"></g>
+                        </svg>
+                        <div id="topology-node-tooltip" class="node-tooltip-card"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page 3: Device Registry & Multi-user Console -->
+            <section class="tab-content" id="devices-page">
+                <div class="device-management-grid">
+                    <!-- Device List Area -->
+                    <div class="device-list-container">
+                        <div class="section-title-wrapper">
+                            <h3>Connected Devices</h3>
+                            <span class="subtitle">Multi-node environment surveillance</span>
+                        </div>
+                        
+                        <div class="device-cards-grid" id="device-cards-list">
+                            <!-- Filled dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Register and Integration Area -->
+                    <div class="integration-sidebar">
+                        <!-- Interactive Browser Client Streamer -->
+                        <div class="glass-form-card browser-streamer-card">
+                            <h3><i class="fa-solid fa-satellite-dish"></i> Browser Client Streamer</h3>
+                            <p class="form-desc">Stream network telemetry from this device (current browser session) without running scripts.</p>
+                            
+                            <div class="form-group">
+                                <label for="browser-dev-name">Device Name</label>
+                                <input type="text" id="browser-dev-name" value="My Browser Node" placeholder="e.g. My Phone" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="browser-dev-id">Device ID</label>
+                                <input type="text" id="browser-dev-id" value="browser-client-node" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="browser-traffic-profile">Simulated Traffic Profile</label>
+                                <select id="browser-traffic-profile">
+                                    <option value="Normal">Benign Baseline (Normal)</option>
+                                    <option value="DDoS">DDoS Simulation (SYN flood)</option>
+                                    <option value="PortScan">Port Scan Simulation (Reconnaissance)</option>
+                                    <option value="BruteForce">Brute Force Simulation (SSH attempts)</option>
+                                </select>
+                            </div>
+
+                            <div class="streamer-action-wrapper" style="display: flex; align-items: center; justify-content: space-between; margin-top: 15px;">
+                                <span class="control-label" style="font-weight: 500; font-size: 0.9rem;">Stream Status:</span>
+                                <button type="button" class="submit-btn" id="browser-stream-btn" style="width: 140px; margin: 0; background: var(--clr-green); color: #000; box-shadow: none;">
+                                    <i class="fa-solid fa-play"></i> Start Stream
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Add Device Form -->
+                        <div class="glass-form-card">
+                            <h3><i class="fa-solid fa-plus-circle"></i> Register Device Node</h3>
+                            <p class="form-desc">Define a new machine interface to trace network telemetry</p>
+                            
+                            <form id="add-device-form">
+                                <div class="form-group">
+                                    <label for="dev-name">Device Name</label>
+                                    <input type="text" id="dev-name" placeholder="e.g. My Linux Laptop" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="dev-id">Device Identifier (ID)</label>
+                                    <input type="text" id="dev-id" placeholder="e.g. linux-laptop-01" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dev-ip">IP Address</label>
+                                    <input type="text" id="dev-ip" placeholder="e.g. 192.168.1.15" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="dev-type">Device Category</label>
+                                    <select id="dev-type" required>
+                                        <option value="Laptop">Laptop / Workstation</option>
+                                        <option value="Server">Local Server Node</option>
+                                        <option value="IoT Board">Raspberry Pi / Micro-controller</option>
+                                        <option value="Sensor">ESP32 / ESP8266 Sensor</option>
+                                        <option value="Mobile Phone">Smart Phone</option>
+                                        <option value="Router">Network Gateway / Router</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="submit-btn">
+                                    <i class="fa-solid fa-save"></i> Register Device
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Integration Guide with Tabbed Instructions -->
+                        <div class="glass-form-card integration-guide-card">
+                            <h3><i class="fa-solid fa-circle-info"></i> Device Integration Guide</h3>
+                            <p class="guide-intro">Connect and stream network flow stats from your laptops, workstations, or IoT microcontrollers.</p>
+
+                            <!-- Guide Platform Tabs -->
+                            <div class="guide-tabs">
+                                <button class="guide-tab-btn active" data-guide-tab="laptop">Laptop / PC</button>
+                                <button class="guide-tab-btn" data-guide-tab="iot">Raspberry Pi</button>
+                                <button class="guide-tab-btn" data-guide-tab="esp32">ESP32 MCU</button>
+                                <button class="guide-tab-btn" data-guide-tab="test">CURL Test</button>
+                            </div>
+
+                            <!-- Laptop Guide Content -->
+                            <div class="guide-tab-content active" id="guide-laptop-content">
+                                <p class="tab-desc">Monitor this laptop's network adapters (Wi-Fi/Ethernet) in real-time. Simply download the launcher pack and run it.</p>
+                                <div class="download-action-group">
+                                    <a href="/api/download/client/run_agent.bat" class="download-file-btn">
+                                        <i class="fa-solid fa-download"></i> Windows Launcher (.bat)
+                                    </a>
+                                    <a href="/api/download/client/run_agent.sh" class="download-file-btn">
+                                        <i class="fa-solid fa-download"></i> macOS / Linux (.sh)
+                                    </a>
+                                    <a href="/api/download/client/client_agent.py" class="download-file-btn secondary" title="Download Python core script directly">
+                                        <i class="fa-brands fa-python"></i> Python Core (.py)
+                                    </a>
+                                </div>
+                                <div class="step-guide">
+                                    <span class="step-badge">Quick Start</span>
+                                    <ol>
+                                        <li>Download the launcher matching your operating system.</li>
+                                        <li>Place the file in a new folder alongside Python core.</li>
+                                        <li>Double-click the launcher to configure and start.</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <!-- IoT Board (Raspberry Pi) Guide Content -->
+                            <div class="guide-tab-content" id="guide-iot-content">
+                                <p class="tab-desc">Run the Python sniffer directly on your Linux Raspberry Pi gateway. Download the agent script and run.</p>
+                                <div class="download-action-group">
+                                    <a href="/api/download/client/client_agent.py" class="download-file-btn">
+                                        <i class="fa-solid fa-download"></i> Download Python Agent
+                                    </a>
+                                </div>
+                                <div class="code-utility-block">
+                                    <div class="block-header">
+                                        <span>Raspberry Pi CLI Command</span>
+                                        <button class="copy-btn" id="copy-run-btn" title="Copy to clipboard">
+                                            <i class="fa-regular fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <pre><code id="client-run-snippet">python3 client_agent.py --server "http://localhost:8000/api/report-flow" --device rpi-node --mode sniffer</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- ESP32 Content -->
+                            <div class="guide-tab-content" id="guide-esp32-content">
+                                <p class="tab-desc">Flash your ESP32 microcontroller with our WiFi-connected Arduino sketch to send sensor flow statistics.</p>
+                                <div class="download-action-group">
+                                    <a href="/api/download/client/esp32_arduino.ino" class="download-file-btn">
+                                        <i class="fa-solid fa-download"></i> Download Arduino Sketch (.ino)
+                                    </a>
+                                </div>
+                                <div class="step-guide">
+                                    <span class="step-badge">GPIO Alarm Pin 12</span>
+                                    <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.3; margin-top:8px;">
+                                        Pulling <b>Pin 12 to 3.3V (HIGH)</b> triggers a simulated DDoS attack flood telemetry. Keeping it LOW reports standard benign MQTT metrics.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- CURL Simulator Content -->
+                            <div class="guide-tab-content" id="guide-test-content">
+                                <p class="tab-desc">Inject a mock DDoS attack payload into the API directly from your terminal using curl.</p>
+                                
+                                <div class="form-group" style="margin-top: 10px;">
+                                    <label for="guide-device-selector">Target Device ID Context:</label>
+                                    <select id="guide-device-selector">
+                                        <!-- Filled dynamically -->
+                                    </select>
+                                </div>
+
+                                <div class="code-utility-block">
+                                    <div class="block-header">
+                                        <span>REST API curl Threat Simulator</span>
+                                        <button class="copy-btn" id="copy-curl-btn" title="Copy to clipboard">
+                                            <i class="fa-regular fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <pre><code id="curl-code-snippet"></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Flow Detail Modal (Glassmorphism Modal) -->
+    <div id="flow-modal" class="modal-overlay">
+        <div class="modal-card glass-modal">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-circle-nodes"></i> Flow Telemetry Analysis</h2>
+                <button class="modal-close" id="close-modal-btn">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-alert-panel" id="modal-threat-panel">
+                    <div class="threat-status-header">
+                        <i class="fa-solid fa-circle-exclamation status-icon" id="modal-threat-icon"></i>
+                        <div>
+                            <h3 id="modal-classification-title">Normal Flow</h3>
+                            <span id="modal-severity-badge">low severity</span>
+                        </div>
+                    </div>
+                    <p id="modal-threat-desc">No threat detected. Benign baseline flow matches security standards.</p>
+                </div>
+
+                <div class="details-cols-grid">
+                    <div class="details-column">
+                        <h4>Header Attributes</h4>
+                        <table class="details-table">
+                            <tr>
+                                <th>Source Host</th>
+                                <td id="modal-src-host">192.168.1.10</td>
+                            </tr>
+                            <tr>
+                                <th>Destination Host</th>
+                                <td id="modal-dst-host">192.168.1.1</td>
+                            </tr>
+                            <tr>
+                                <th>Source Port</th>
+                                <td id="modal-src-port">60341</td>
+                            </tr>
+                            <tr>
+                                <th>Destination Port</th>
+                                <td id="modal-dst-port">1883 (MQTT)</td>
+                            </tr>
+                            <tr>
+                                <th>IP Protocol</th>
+                                <td id="modal-protocol">6 (TCP)</td>
+                            </tr>
+                        </table>
+
+                        <h4>Flow Metrics</h4>
+                        <table class="details-table">
+                            <tr>
+                                <th>Flow Duration</th>
+                                <td id="modal-duration">1.25s</td>
+                            </tr>
+                            <tr>
+                                <th>Packet Count</th>
+                                <td id="modal-packets">15</td>
+                            </tr>
+                            <tr>
+                                <th>Byte Count</th>
+                                <td id="modal-bytes">1,240 B</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="details-column">
+                        <h4>Derived Deep Learning Features</h4>
+                        <table class="details-table">
+                            <tr>
+                                <th>Packet Rate</th>
+                                <td id="modal-packet-rate">12.0 pkts/s</td>
+                            </tr>
+                            <tr>
+                                <th>Byte Rate</th>
+                                <td id="modal-byte-rate">992.0 B/s</td>
+                            </tr>
+                            <tr>
+                                <th>Mean Packet Size</th>
+                                <td id="modal-mean-size">82.7 B</td>
+                            </tr>
+                            <tr>
+                                <th>TCP Protocol Flag syn</th>
+                                <td id="modal-syn">1</td>
+                            </tr>
+                            <tr>
+                                <th>TCP Protocol Flag ack</th>
+                                <td id="modal-ack">1</td>
+                            </tr>
+                            <tr>
+                                <th>TCP Protocol Flag rst</th>
+                                <td id="modal-rst">0</td>
+                            </tr>
+                            <tr>
+                                <th>TCP Protocol Flag fin</th>
+                                <td id="modal-fin">0</td>
+                            </tr>
+                        </table>
+
+                        <h4>PyTorch 1D-CNN Predictions</h4>
+                        <div class="probability-bars-container" id="modal-probability-bars">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local JS -->
+    <script src="app.js"></script>
+</body>
+</html>

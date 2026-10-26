@@ -1,0 +1,42 @@
+{
+  "ids-server": {
+    "device_id": "ids-server",
+    "name": "IDS Local Server Node",
+    "ip_address": "172.20.10.5",
+    "device_type": "Server",
+    "status": "online",
+    "total_flows": 152,
+    "anomalies_detected": 2,
+    "last_seen": 1792981550.1956418
+  },
+  "smart-thermostat": {
+    "device_id": "smart-thermostat",
+    "name": "ESP32 Smart Thermostat",
+    "ip_address": "192.168.1.22",
+    "device_type": "Sensor",
+    "status": "offline",
+    "total_flows": 433,
+    "anomalies_detected": 2,
+    "last_seen": 1792980928.4235501
+  },
+  "iphone-client": {
+    "device_id": "iphone-client",
+    "name": "Admin Mobile Device",
+    "ip_address": "192.168.1.105",
+    "device_type": "Mobile Phone",
+    "status": "offline",
+    "total_flows": 88,
+    "anomalies_detected": 0,
+    "last_seen": 1792980928.4236038
+  },
+  "hp-laptop-15": {
+    "device_id": "hp-laptop-15",
+    "name": "Shiva Jyothi HP Laptop",
+    "ip_address": "172.20.10.5",
+    "device_type": "Laptop",
+    "status": "offline",
+    "total_flows": 4,
+    "anomalies_detected": 0,
+    "last_seen": 1792980928.4236057
+  }
+}
